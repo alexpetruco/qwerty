@@ -55,5 +55,27 @@ namespace CRM_UI
                 db.SaveChanges();
             } 
         }
+
+        private void addSellerToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var form = new SellerForm();
+            if(form.ShowDialog() == DialogResult.OK)
+            {
+
+                db.Sellers.Add(form.Seller);
+                db.SaveChanges();
+            }
+
+        }
+
+        private void addProductToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var form = new ProductForm();
+            if (form.ShowDialog() == DialogResult.OK)
+            {
+                db.Products.Add(form.Product);
+                db.SaveChanges();
+            }
+        }
     }
 }
