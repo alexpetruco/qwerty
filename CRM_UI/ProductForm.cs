@@ -19,6 +19,13 @@ namespace CRM_UI
         {
             InitializeComponent();
         }
+        public ProductForm(Product product):this()
+        {
+            Product = product;
+            textBox1.Text = Product.Name;
+            numericUpDown1.Value = Product.Price;
+            numericUpDown2.Value = Product.Count;
+        }
 
         private void textBox1_TextChanged(object sender, EventArgs e)
         {
@@ -32,14 +39,11 @@ namespace CRM_UI
 
         private void button1_Click(object sender, EventArgs e)
         {
-            Product = new Product()
-            {
-
-                Name = textBox1.Text,
-                Price = numericUpDown1.Value,
-                Count =Convert.ToInt32(numericUpDown2.Value)
-                
-            };
+            var pr = Product ?? new Product();
+            pr.Name = textBox1.Text;
+            pr.Price = numericUpDown1.Value;
+            pr.Count = Convert.ToInt32(numericUpDown2.Value);
+           
             Close();
         }
     }

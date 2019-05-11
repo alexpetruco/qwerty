@@ -19,6 +19,11 @@ namespace CRM_UI
         {
             InitializeComponent();
         }
+        public CustomerForm(Customer customer):this()
+        {
+            Customer = customer;
+            textBox1.Text = Customer.Name;
+        }
 
         private void textBox1_TextChanged(object sender, EventArgs e)
         {
@@ -32,11 +37,13 @@ namespace CRM_UI
 
         private void button1_Click(object sender, EventArgs e)
         {
-            Customer = new Customer()
-            {
+            //Customer = new Customer()
+            //{
 
-                Name = textBox1.Text
-            };
+            //    Name = textBox1.Text
+            //};
+            var cu = Customer ?? new Customer();
+            cu.Name = textBox1.Text;
             Close();
         }
     }
