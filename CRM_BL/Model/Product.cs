@@ -17,5 +17,18 @@ namespace CRM_BL.Model
         {
             return Name;
         }
+        public override int GetHashCode()
+        {
+            return Productid;
+        }
+        public override bool Equals(object obj)
+        {
+            if (obj is Product product)
+            {
+                return Productid.Equals(product.Productid);
+            }
+            return false;
+            
+        }
     }
 }
