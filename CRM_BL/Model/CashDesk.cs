@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,25 +11,32 @@ namespace CRM_BL.Model
     {
               CRMcontext db = new CRMcontext();
              public int NumCash { get; set; }
-             public Seller Seller { get; set; }
-             public Queue<Cart> Queue { get; set; }
+        public Seller Seller { get; set; } = new Seller();
+        public Queue<Cart> Queue_ { get; set; } = new Queue<Cart>();
              public int MaxQueueLength { get; set; }
              public int ExitCustomer { get; set; }
              public bool Ismodel { get; set; }
+        public int Count
+        {
+            get{return Queue_.Count;}
+            
+        }
+
         public CashDesk(int _numcash,Seller _seller)
         {
             NumCash = _numcash;
             Seller = _seller;
-            Queue = new Queue<Cart>();
+            Queue_ = new Queue<Cart>();
             Ismodel = true;
+            
 
         }
 
         public void AddInQueue(Cart _cart)
         {
-            if (Queue.Count <= MaxQueueLength)
+            if (Queue_.Count <= MaxQueueLength)
             {
-                Queue.Enqueue(_cart);
+                Queue_.Enqueue(_cart);
             }
             else
             {
@@ -38,7 +46,11 @@ namespace CRM_BL.Model
         public decimal ExctractQueue()
         {
             decimal sum = 0;
-            var deqcart = Queue.Dequeue();
+            if(Queue_.Count==0)
+            {
+                return 0;
+            }
+            Cart deqcart = Queue_.Dequeue();
             if (deqcart != null)
             {
                 var check = new Check()
