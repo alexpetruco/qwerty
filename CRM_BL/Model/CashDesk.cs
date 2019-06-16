@@ -9,27 +9,26 @@ namespace CRM_BL.Model
 {
     public class CashDesk
     {
-              CRMcontext db = new CRMcontext();
+             CRMcontext db = new CRMcontext();
              public int NumCash { get; set; }
-        public Seller Seller { get; set; } = new Seller();
-        public Queue<Cart> Queue_ { get; set; } = new Queue<Cart>();
+             public Seller Seller { get; set; }// = new Seller();
+             public Queue<Cart> Queue_ { get; set; } //= new Queue<Cart>();
              public int MaxQueueLength { get; set; }
              public int ExitCustomer { get; set; }
              public bool Ismodel { get; set; }
         public int Count
         {
-            get{return Queue_.Count;}
+            get{return Queue_.Count;} //можно так public int Count =>Queue.Count
             
         }
+        public event EventHandler<Check> Checkclosed;
 
         public CashDesk(int _numcash,Seller _seller)
         {
             NumCash = _numcash;
             Seller = _seller;
             Queue_ = new Queue<Cart>();
-            Ismodel = true;
-            
-
+            Ismodel = true;           
         }
 
         public void AddInQueue(Cart _cart)
@@ -96,15 +95,21 @@ namespace CRM_BL.Model
                     }
                     
                 }
+                check.Price = sum;
 
                 if (!Ismodel)
                 {
                     db.SaveChanges();
 
                 }
+                Checkclosed?.Invoke(this, check);
             }
 
             return sum;
+        }
+        public override string ToString()
+        {
+            return $"CashWindow{NumCash }";
         }
     }
 }

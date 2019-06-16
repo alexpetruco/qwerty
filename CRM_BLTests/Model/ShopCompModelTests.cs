@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Threading;
 
 namespace CRM_BL.Model.Tests
 {
@@ -16,6 +17,7 @@ namespace CRM_BL.Model.Tests
         {
             var model = new ShopCompModel();
             model.Start();
+            Thread.Sleep(10000);
         }
     }
 }
