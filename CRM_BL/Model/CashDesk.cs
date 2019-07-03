@@ -9,33 +9,37 @@ namespace CRM_BL.Model
 {
     public class CashDesk
     {
-             CRMcontext db = new CRMcontext();
-             public int NumCash { get; set; }
-             public Seller Seller { get; set; }// = new Seller();
-             public Queue<Cart> Queue_ { get; set; } //= new Queue<Cart>();
-             public int MaxQueueLength { get; set; }
-             public int ExitCustomer { get; set; }
-             public bool Ismodel { get; set; }
+        CRMcontext db ;
+        public int NumCash { get; set; }
+        public Seller Seller { get; set; }// = new Seller();
+        public Queue<Cart> Queue { get; set; } //= new Queue<Cart>();
+        public int MaxQueueLength { get; set; }
+        public int ExitCustomer { get; set; }
+        public bool Ismodel { get; set; }
         public int Count
         {
-            get{return Queue_.Count;} //можно так public int Count =>Queue.Count
-            
+            get { return Queue.Count; } //можно так public int Count =>Queue.Count;
+            set { value = 1; }
         }
+        //public int Count => Queue.Count;
         public event EventHandler<Check> Checkclosed;
 
-        public CashDesk(int _numcash,Seller _seller)
+        public CashDesk(int _numcash,Seller _seller,CRMcontext db)
         {
             NumCash = _numcash;
             Seller = _seller;
-            Queue_ = new Queue<Cart>();
-            Ismodel = true;           
+            Queue = new Queue<Cart>();
+            Ismodel = true;
+            MaxQueueLength = 10;
+            this.db = db ?? new CRMcontext() ;
+
         }
 
         public void AddInQueue(Cart _cart)
         {
-            if (Queue_.Count <= MaxQueueLength)
+            if (Queue.Count < MaxQueueLength)
             {
-                Queue_.Enqueue(_cart);
+                Queue.Enqueue(_cart);
             }
             else
             {
@@ -45,11 +49,11 @@ namespace CRM_BL.Model
         public decimal ExctractQueue()
         {
             decimal sum = 0;
-            if(Queue_.Count==0)
+            if(Queue.Count==0)
             {
                 return 0;
             }
-            Cart deqcart = Queue_.Dequeue();
+            var deqcart = Queue.Dequeue();
             if (deqcart != null)
             {
                 var check = new Check()

@@ -62,7 +62,7 @@ namespace CRM_BL.Model.Tests
             cart2.AddProduct(product_2);
             var cartResult2 = cart.GetAll();
 
-            var cashdesk = new CashDesk(1, seller);
+            var cashdesk = new CashDesk(1, seller,null);
             cashdesk.MaxQueueLength = 10;
             cashdesk.AddInQueue(cart);
             cashdesk.AddInQueue(cart2);

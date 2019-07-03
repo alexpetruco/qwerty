@@ -11,57 +11,65 @@ namespace CRM_BL.Model
     {  
         Generator generator = new Generator();
         Random rand1 = new Random();
-        bool flag = false;
+
+        List<Task> tasks = new List<Task>();
+        CancellationTokenSource cancellationTokenSource;
+        CancellationToken token;
         public List<CashDesk> CashDesks { get; set; } = new List<CashDesk>();
         public List<Cart> Carts { get; set; } = new List<Cart>();
         public List<Check> Checks { get; set; } = new List<Check>();
         public List<Sell> Sells { get; set; } = new List<Sell>();
         public Queue<Seller> Sellers { get; set; } = new Queue<Seller>();
+
+        public int CustomerSpeed { get; set; } = 100;
+        public int CashDeskSpeed { get; set; } = 100;
+
         public ShopCompModel()
         {
-           var sellers= generator.GetNewSeller(20);
-            generator.GetNewProduct(1000);
-            generator.GetNEwCustomers(100);
+           var sellers= generator.GetNewSellers(20);
+            generator.GetNewProducts(1000);
+            generator.GetNewCustomers(100);
+            cancellationTokenSource = new CancellationTokenSource();
+            token = cancellationTokenSource.Token;
+
             foreach (var seller in sellers)
             {
                 Sellers.Enqueue(seller);
             }
             for (int i=0; i<3;i++)
             {
-                CashDesks.Add(new CashDesk(CashDesks.Count,Sellers.Dequeue()));
+                CashDesks.Add(new CashDesk(CashDesks.Count,Sellers.Dequeue(),null));
             }
         }
         public void Start()
         {
-            flag = true;
-            Task.Run(()=> CreateCart(10,1000));    //=>лямбда выражение в качестве лямбд выражения передаем метод       
-
-            var cashdesktask = CashDesks.Select(c => new Task(() => CashDeskWork(c, 1000)));
-            foreach (var _task in cashdesktask)
+            tasks.Add(new Task(() => CreateCart(10, token)));
+            tasks.AddRange(CashDesks.Select(c => new Task(() => CashDeskWork(c, token))));
+            foreach (var task in tasks)
             {
-                _task.Start();
+                task.Start();
             }
-
         }
         public void Stop()
         {
-            flag = false;
+                cancellationTokenSource.Cancel();
         }
-        private void CashDeskWork(CashDesk _cashDesk,int _sleep)
+        private void CashDeskWork(CashDesk _cashDesk,CancellationToken token)
         {
+            while(!token.IsCancellationRequested)
             if(_cashDesk.Count>0)
             {
                 _cashDesk.ExctractQueue();
-                Thread.Sleep(_sleep);
+                Thread.Sleep(1000);
             }
         }
    
 
-        private void CreateCart(int _customercount,int _sleep)
+        private void CreateCart(int _customercount,CancellationToken token)
         {
-            while (true)
+            while (!token.IsCancellationRequested)
             {
-                var customers_ = generator.GetNEwCustomers(_customercount);
+                var customers_ = generator.GetNewCustomers(_customercount);
                 
                 foreach (var custom in customers_)
                 {
@@ -70,11 +78,11 @@ namespace CRM_BL.Model
                     {
                         cart_.AddProduct(product_);
                     }
-                    var cash1 = CashDesks[rand1.Next(CashDesks.Count - 1)];
+                    var cash1 = CashDesks[rand1.Next(CashDesks.Count)];
                     cash1.AddInQueue(cart_);
-
+                    
                 }
-                Thread.Sleep(_sleep);
+                Thread.Sleep(CustomerSpeed);
             }
         }
     }

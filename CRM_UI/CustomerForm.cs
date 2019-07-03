@@ -21,7 +21,7 @@ namespace CRM_UI
         }
         public CustomerForm(Customer customer):this()
         {
-            Customer = customer;
+            Customer = customer ?? new Customer();
             textBox1.Text = Customer.Name;
         }
 
@@ -42,8 +42,8 @@ namespace CRM_UI
 
             //    Name = textBox1.Text
             //};
-            var cu = Customer ?? new Customer();
-            cu.Name = textBox1.Text;
+            Customer = Customer ?? new Customer();
+            Customer.Name = textBox1.Text;
             Close();
         }
     }
